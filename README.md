@@ -19,8 +19,10 @@ MCP server สำหรับค้นหา SCImago Journal Rank โดยเ�
 ติดตั้งจาก GitHub:
 
 ```bash
-npm install -g github:chagkrit/Scimago-MCP
+npm install -g https://github.com/chagkrit/Scimago-MCP/archive/refs/heads/main.tar.gz
 ```
+
+หมายเหตุ: ใช้ GitHub archive URL แทน `github:chagkrit/Scimago-MCP` เพราะ npm บางเวอร์ชันติดตั้ง git dependency แบบ global แล้วทำ symlink ไปยัง temporary git clone ทำให้ command หายหลังติดตั้ง
 
 หลังติดตั้งแล้วจะมี commands:
 
