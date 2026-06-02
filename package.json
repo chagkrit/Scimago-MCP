@@ -15,6 +15,7 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "cli": "tsx src/cli.ts",
+    "prepare": "node -e \"const fs=require('fs'); for (const file of ['dist/index.js','dist/cli.js']) if (!fs.existsSync(file)) { console.error(file + ' is missing. Run npm run build before publishing.'); process.exit(1); }\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
