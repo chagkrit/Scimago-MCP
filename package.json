@@ -1,0 +1,35 @@
+{
+  "name": "scopus-mcp-connector",
+  "version": "0.1.0",
+  "description": "MCP connector for exporting Scopus research and source metadata to CSV.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chagkrit/Scopus-MCP.git"
+  },
+  "bin": {
+    "scopus-mcp": "./dist/index.js",
+    "scopus-export": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "cli": "tsx src/cli.ts",
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "commander": "^14.0.2",
+    "csv-stringify": "^6.6.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

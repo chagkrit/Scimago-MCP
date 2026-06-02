@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "scopus": {
+      "command": "scopus-mcp",
+      "args": [],
+      "env": {
+        "SCOPUS_API_KEY": "YOUR_ELSEVIER_API_KEY",
+        "SCOPUS_INST_TOKEN": "OPTIONAL_INSTITUTION_TOKEN"
+      }
+    }
+  }
+}
