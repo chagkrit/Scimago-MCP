@@ -1,136 +1,174 @@
-# Scopus MCP Connector
+# Scimago MCP
 
-MCP server สำหรับค้นหา metadata จาก Elsevier Scopus APIs แล้วบันทึกเป็น CSV
+MCP server สำหรับค้นหา SCImago Journal Rank โดยเน้นวารสาร Q1/Q2 ใน Health science / Medicine:
 
-## สิ่งที่ต้องมี
+- Oncology
+- Surgery
+- Obstetrics and Gynecology
+
+ค่าเริ่มต้นของ tool จะค้นหา Medicine categories เหล่านี้ให้ทันที และ export เป็น JSON หรือ CSV ได้
+
+## Requirements
 
 - Node.js 20+
-- Elsevier API key: ตั้งค่าเป็น `SCOPUS_API_KEY`
-- ถ้าองค์กรของคุณใช้ institutional token ให้ตั้ง `SCOPUS_INST_TOKEN`
+- ไม่ต้องใช้ SCImago API key
+- ถ้า `www.scimagojr.com` บล็อก request ด้วย browser protection ให้ตั้ง `SCIMAGO_COOKIE` จาก browser session ที่เข้าเว็บได้
 
-Scopus web page เช่น `https://www.scopus.com/sources.uri?...` มักต้องใช้ browser session และอาจป้องกัน bot access ดังนั้น connector นี้ใช้ Elsevier APIs แทนการ scrape หน้าเว็บโดยตรง
+## Install On Another Machine
 
-## ติดตั้ง
-
-ติดตั้งจาก GitHub แบบ global:
+ติดตั้งจาก GitHub:
 
 ```bash
-npm install -g github:chagkrit/Scopus-MCP
+npm install -g github:chagkrit/Scimago-MCP
 ```
 
-หรือ clone repo แล้วติดตั้งเอง:
+หลังติดตั้งแล้วจะมี commands:
 
 ```bash
-git clone https://github.com/chagkrit/Scopus-MCP.git
-cd Scopus-MCP
-npm install
-npm run build
+scimago-mcp
+scimago-export
 ```
 
-หลังติดตั้งแล้วจะมี command:
+## Claude Code
+
+เพิ่ม MCP server แบบ user scope เพื่อให้ใช้ได้ทุก project:
 
 ```bash
-scopus-mcp
-scopus-export
+claude mcp add scimago -s user -- scimago-mcp
+claude mcp get scimago
 ```
 
-## ใช้เป็น MCP server
-
-ตั้งค่า API key ก่อน:
+ถ้า SCImago บล็อก request และคุณมี cookie จาก browser:
 
 ```bash
-export SCOPUS_API_KEY="YOUR_ELSEVIER_API_KEY"
-```
-
-### Claude Code
-
-เพิ่ม MCP server ให้ใช้ได้ทุก project/folder:
-
-```bash
-claude mcp add scopus -s user -e SCOPUS_API_KEY="$SCOPUS_API_KEY" -- scopus-mcp
-claude mcp get scopus
+claude mcp add scimago -s user \
+  -e SCIMAGO_COOKIE="YOUR_BROWSER_COOKIE" \
+  -- scimago-mcp
 ```
 
 ถ้าต้องการใช้เฉพาะ project ปัจจุบัน ให้เปลี่ยน `-s user` เป็น `-s local`
 
-### Codex หรือ MCP client อื่น
+## Claude Code Terminal
 
-เพิ่ม config ให้ MCP client โดยใช้ command จาก global install:
+ทดสอบจาก terminal โดย export CSV:
+
+```bash
+scimago-export scimago \
+  --categories oncology,surgery,obstetrics-and-gynecology \
+  --quartiles Q1,Q2 \
+  --max-results 300 \
+  --output ./exports/scimago_health_medicine_q1_q2.csv
+```
+
+ระบุปี เช่น ปี 2024:
+
+```bash
+scimago-export scimago \
+  --year 2024 \
+  --max-results 300 \
+  --output ./exports/scimago_2024_q1_q2.csv
+```
+
+## Claude Desktop / Claude Cowork
+
+เพิ่ม MCP server ใน config ของ Claude:
 
 ```json
 {
   "mcpServers": {
-    "scopus": {
-      "command": "scopus-mcp",
+    "scimago": {
+      "command": "scimago-mcp",
       "args": [],
       "env": {
-        "SCOPUS_API_KEY": "YOUR_ELSEVIER_API_KEY",
-        "SCOPUS_INST_TOKEN": "OPTIONAL_INSTITUTION_TOKEN"
+        "SCIMAGO_COOKIE": "OPTIONAL_BROWSER_COOKIE_IF_SCIMAGO_BLOCKS_REQUESTS"
       }
     }
   }
 }
 ```
 
-## Tools
+ถ้าไม่ได้ใช้ cookie สามารถลบ `env` ออกได้:
 
-- `scopus_search`: ค้นหางานวิจัยและคืนผลลัพธ์เป็น JSON
-- `scopus_search_to_csv`: ค้นหางานวิจัยและบันทึก CSV
-- `scopus_sources_to_csv`: ดึง metadata ของ journal/source จาก Serial Title API และบันทึก CSV คล้ายข้อมูลในหน้า Scopus Sources
+```json
+{
+  "mcpServers": {
+    "scimago": {
+      "command": "scimago-mcp",
+      "args": []
+    }
+  }
+}
+```
 
-ตัวอย่าง query:
+## MCP Tools
+
+- `scimago_health_medicine_journals`: ค้นหา SCImago และคืนผลลัพธ์เป็น JSON
+- `scimago_health_medicine_journals_to_csv`: ค้นหา SCImago และบันทึก CSV
+
+ค่า default:
+
+- area: Medicine
+- categories: Oncology (`2730`), Surgery (`2746`), Obstetrics and Gynecology (`2729`)
+- quartiles: Q1, Q2
+- source type: journal
+- sort: SJR descending
+
+ตัวอย่าง MCP input:
+
+```json
+{
+  "maxResults": 300,
+  "quartiles": ["Q1", "Q2"],
+  "categories": ["oncology", "surgery", "obstetrics-and-gynecology"]
+}
+```
+
+ตัวอย่าง export CSV:
+
+```json
+{
+  "year": 2024,
+  "maxResults": 300,
+  "outputPath": "./exports/scimago_2024_q1_q2.csv"
+}
+```
+
+## SCImago URLs
+
+Tool ใช้ CSV export ของ SCImago ในรูปแบบนี้:
 
 ```text
-TITLE-ABS-KEY("artificial intelligence" AND education) AND PUBYEAR > 2020
+https://www.scimagojr.com/journalrank.php?area=2700&category=2730&type=j&out=xls
 ```
 
-## ใช้ผ่าน CLI
+Category IDs:
+
+- Oncology: `2730`
+- Surgery: `2746`
+- Obstetrics and Gynecology: `2729`
+
+## Optional Scopus Tools
+
+โปรเจกต์นี้ยังเก็บ Scopus API tools เดิมไว้เป็น optional:
+
+- `scopus_search`
+- `scopus_search_to_csv`
+- `scopus_sources_to_csv`
+
+ต้องตั้ง `SCOPUS_API_KEY` ก่อนใช้งาน tools เหล่านี้
+
+## Local Development
 
 ```bash
-export SCOPUS_API_KEY="YOUR_ELSEVIER_API_KEY"
-
-scopus-export search \
-  --query 'TITLE-ABS-KEY("artificial intelligence" AND education)' \
-  --max-results 50 \
-  --output ./exports/scopus_ai_education.csv
-
-scopus-export sources \
-  --content journal \
-  --subject COMP \
-  --max-results 100 \
-  --output ./exports/scopus_sources.csv
+git clone https://github.com/chagkrit/Scimago-MCP.git
+cd Scimago-MCP
+npm install
+npm run build
+npm run typecheck
 ```
 
-## CSV fields
+ใช้ local build กับ Claude Code:
 
-งานวิจัย:
-
-- scopus_id
-- eid
-- title
-- author
-- publication
-- cover_date
-- year
-- cited_by_count
-- doi
-- issn
-- eissn
-- aggregation_type
-- subtype
-- open_access
-- url
-
-Source/journal:
-
-- source_id
-- title
-- issn
-- eissn
-- publisher
-- coverage
-- subject_area
-- cite_score
-- snip
-- sjr
-- url
+```bash
+claude mcp add scimago-local -s local -- node "$(pwd)/dist/index.js"
+```

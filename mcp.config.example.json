@@ -1,11 +1,10 @@
 {
   "mcpServers": {
-    "scopus": {
-      "command": "scopus-mcp",
+    "scimago": {
+      "command": "scimago-mcp",
       "args": [],
       "env": {
-        "SCOPUS_API_KEY": "YOUR_ELSEVIER_API_KEY",
-        "SCOPUS_INST_TOKEN": "OPTIONAL_INSTITUTION_TOKEN"
+        "SCIMAGO_COOKIE": "OPTIONAL_BROWSER_COOKIE_IF_SCIMAGO_BLOCKS_REQUESTS"
       }
     }
   }

@@ -1,13 +1,15 @@
 {
-  "name": "scopus-mcp-connector",
+  "name": "scimago-mcp",
   "version": "0.1.0",
-  "description": "MCP connector for exporting Scopus research and source metadata to CSV.",
+  "description": "MCP connector for finding Q1/Q2 SCImago health and medicine journals.",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chagkrit/Scopus-MCP.git"
+    "url": "git+https://github.com/chagkrit/Scimago-MCP.git"
   },
   "bin": {
+    "scimago-mcp": "./dist/index.js",
+    "scimago-export": "./dist/cli.js",
     "scopus-mcp": "./dist/index.js",
     "scopus-export": "./dist/cli.js"
   },
