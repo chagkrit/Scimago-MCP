@@ -9,9 +9,7 @@
   },
   "bin": {
     "scimago-mcp": "./dist/index.js",
-    "scimago-export": "./dist/cli.js",
-    "scopus-mcp": "./dist/index.js",
-    "scopus-export": "./dist/cli.js"
+    "scimago-export": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
