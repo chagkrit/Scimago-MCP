@@ -15,7 +15,6 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "cli": "tsx src/cli.ts",
-    "prepare": "npm run build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
